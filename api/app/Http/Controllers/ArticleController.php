@@ -26,7 +26,6 @@ public function create_article(ArticleRequest $parms ){
     $parms['image'] ? array_merge($article, ['image' => $parms['image']]) : array_merge($article, ['image' => null]) ;
     
     Article::create($article);
-
     return jsonResponse('Artigo criado com sucesso!!', 201);
 
 
