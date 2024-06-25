@@ -19,4 +19,4 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::post('/singup', [UserContrller::class, 'create_user'])->name('create.user');
-Route::post('/siguin', [UserContrller::class, 'login_user'])->name('login.user')->middleware('jwt');
+Route::post('/siguin', [UserContrller::class, 'login_user'])->name('login.user');
