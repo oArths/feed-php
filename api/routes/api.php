@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserContrller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,4 +29,9 @@ Route::get('/articles/user/{id?}', [ArticleController::class, 'get_user_article'
 Route::get('/articles/all/{id?}', [ArticleController::class, 'get_article'])->name('get.article')->middleware('jwt');
 Route::delete('/articles/delete/{id?}', [ArticleController::class, 'delete_article'])->name('delete.article')->middleware('jwt');
 Route::put('/articles/update/', [ArticleController::class, 'update_article'])->name('update.article')->middleware('jwt');
+
+Route::post('/comment', [CommentController::class, 'Create_Comment'])->name('create.comment')->middleware('jwt');
+Route::put('/comment/update', [CommentController::class, 'Update_comment'])->name('update.comment')->middleware('jwt');
+Route::delete('/comment/delete/{id?}', [CommentController::class, 'delete_comment'])->name('delete.comment')->middleware('jwt');
+Route::get('/comment/all/{id?}', [CommentController::class, 'list_comment'])->name('list.comment')->middleware('jwt');
 });
