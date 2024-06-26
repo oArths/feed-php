@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\User;
+use App\Models\Tag;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
 
             });
         });
+        Tag::factory(10)->create();
 
 
 
