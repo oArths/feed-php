@@ -8,6 +8,7 @@ use App\Http\Requests\UserRequest;
 use App\Http\Controllers\JwtController;
 use App\Http\Middleware\JwtValidation;
 use App\Http\Requests\UserSiguin;
+
 class UserContrller extends Controller
 {
     public function create_user(UserRequest $params){

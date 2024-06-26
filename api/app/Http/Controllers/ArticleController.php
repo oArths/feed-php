@@ -109,4 +109,10 @@ public function update_article(ArticleRequest $parms){
 
     return jsonResponse('Artigo atualizado com sucesso!!', 201);
 } 
+public function recently_article(){
+
+    $articles = Article::orderBy('created_at', 'desc')->get();
+
+    return jsonResponse('Artigos recentes', 200, $articles);
+}
 }
