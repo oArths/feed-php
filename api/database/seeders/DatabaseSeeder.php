@@ -19,16 +19,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
-        // \App\Models\Article::factory(10)->create();
-        User::factory(10)->create()->each(function ($user){
-            Article::factory(5)->create(['user_id' => $user->id])->each(function ($article) use ($user){
-                Comment::factory(3)->create(
-                ['user_id' => $user->id, 'article_id' => $article->id ]);
+        // User::factory(10)->create()->each(function ($user){
+        //     Article::factory(5)->create(['user_id' => $user->id])->each(function ($article) use ($user){
+        //         Comment::factory(3)->create(
+        //         ['user_id' => $user->id, 'article_id' => $article->id ]);
+        //         $tags = Tag::factory(3)->create();
+        //         $article->tags()->attach($tags);
+        //     });
+        // });
+        $tags = Tag::factory(20)->create();
 
+        // Cria usuários
+        User::factory(10)->create()->each(function ($user) use ($tags) {
+            // Cria artigos para cada usuário
+            Article::factory(5)->create(['user_id' => $user->id])->each(function ($article) use ($user, $tags) {
+                // Associa um conjunto aleatório de tags a cada artigo
+                $article->tags()->attach($tags->random(3));
+
+                // Cria comentários para os artigos
+                Comment::factory(3)->create([
+                    'user_id' => $user->id,
+                    'article_id' => $article->id
+                ]);
             });
         });
-        Tag::factory(10)->create();
 
 
 
