@@ -21,9 +21,9 @@ class Article extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
-    // public function tags(){
-    //     return $this->belongsToMany(Tags::class);
-    // }
+    public function tags(){
+        return $this->belongsToMany(Tag::class);
+    }
     public function comments(){
         return $this->hasMany(Comment::class);
     }
