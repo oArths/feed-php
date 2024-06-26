@@ -28,7 +28,9 @@ Route::prefix('auth')->group(function(){
     Route::get('/articles/all/{id?}', [ArticleController::class, 'get_article'])->name('get.article')->middleware('jwt');
     Route::delete('/articles/delete/{id?}', [ArticleController::class, 'delete_article'])->name('delete.article')->middleware('jwt');
     Route::put('/articles/update/', [ArticleController::class, 'update_article'])->name('update.article')->middleware('jwt');
-    Route::get('/articles/recently', [ArticleController::class, 'recently_article'])->name('rencently.comment')->middleware('jwt');
+    Route::get('/articles/recently', [ArticleController::class, 'recently_article'])->name('rencently.article')->middleware('jwt');
+    Route::get('/articles/recently/user/{userid?}', [ArticleController::class, 'articleTagsUser'])->name('rencently.user.article')->middleware('jwt');
+    Route::get('/articles/tags/user/{userId?}', [ArticleController::class, 'TagsArticleUser'])->name('tags.user.article')->middleware('jwt');
 
     Route::post('/comment', [CommentController::class, 'Create_Comment'])->name('create.comment')->middleware('jwt');
     Route::put('/comment/update', [CommentController::class, 'Update_comment'])->name('update.comment')->middleware('jwt');
