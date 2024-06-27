@@ -16,14 +16,27 @@ public function create_article(ArticleRequest $parms ){
 
     $user = User::where('email', $parms['Auth']['email'])->first();
 
+    // return $parms->title;
+    
+    // $parms['image'] ? array_merge($article, ['image' => $parms['image']]) : array_merge($article, ['image' => null]) ;
+    
+    if($parms->hasfile('image') && $parms->file('image')->isValid()){
+        
+        $requestImage = $parms->file('image');
+        $extendion = $requestImage->extension();
+        $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . '.' . $extendion;
+        
+        $requestImage->move(public_path('img/user'), $imageName);
+    }else{
+        $imageName = null;
+    }
+
     $article = [
         'title' => $parms['title'],
         'description' => $parms['description'],
-        'image' => $parms['image'],
+        'image' => $imageName,
         'user_id' => $user->id,
     ];
-    
-    $parms['image'] ? array_merge($article, ['image' => $parms['image']]) : array_merge($article, ['image' => null]) ;
     
     Article::create($article);
     return jsonResponse('Artigo criado com sucesso!!', 201);
