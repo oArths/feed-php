@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\UserContrller;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,6 @@ Route::prefix('auth')->group(function(){
     
     Route::post('/tag/create', [TagController::class, 'create_tag'])->name('create.tag')->middleware('jwt');
     Route::get('/tag/all', [TagController::class, 'get_tags'])->name('gat.tag')->middleware('jwt');
+    
+    Route::post('/like', [LikeController::class, 'like'])->name('like.user')->middleware('jwt');
 });
