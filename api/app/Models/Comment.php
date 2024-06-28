@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Article;
+use App\Models\CommentsLike;
 
 class Comment extends Model
 {
@@ -24,6 +25,13 @@ class Comment extends Model
     
     public function article(){
         return $this->hasMany(Article::class);
+    }
+    public function likesComments(){
+        return $this->hasMany(CommentsLike::class);
+    }
+    public function likesCountComments()
+    {
+        return $this->likesComments()->count();
     }
 
 }

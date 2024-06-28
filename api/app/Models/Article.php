@@ -35,5 +35,9 @@ class Article extends Model
     {
         return $this->likes()->count();
     }
+    public function likesComments()
+    {
+        return $this->hasMany(CommentsLike::class);
+    }
 
 }
