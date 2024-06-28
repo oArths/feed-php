@@ -15,8 +15,6 @@ class ArticleController extends Controller
 public function create_article(ArticleRequest $parms ){
 
     $user = User::where('email', $parms['Auth']['email'])->first();
-
-    // return $parms->title;
     
     // $parms['image'] ? array_merge($article, ['image' => $parms['image']]) : array_merge($article, ['image' => null]) ;
     
@@ -45,7 +43,7 @@ public function create_article(ArticleRequest $parms ){
 }
 public function list_article(){
 
-    $articles = Article::all();
+    $articles = Article::withCount('likes')->all();
 
     return jsonResponse('Artigos ', 200, $articles);
 }
@@ -58,7 +56,7 @@ public function get_user_article( $id = null){
     if(is_null($id) || is_null($user)){
         return jsonError('Id não informado ou invalido', 404);
     }
-    $articles = $user->articles()->get();
+    $articles = $user->articles()->withCount('likes')->get();
 
     if($articles->isEmpty()){
         return jsonError('Usuario não possui artigos', 404);
@@ -72,7 +70,7 @@ public function get_article( $id = null){
     if(is_null($id)){
         return jsonError('Id não informado', 404);
     }
-    $articles = Article::find($id);
+    $articles = Article::withCount('likes')->find($id);
 
     if(Empty($articles)){
         return jsonError('Artigo não exsite', 404);
@@ -113,13 +111,23 @@ public function update_article(ArticleRequest $parms){
         return jsonError('Artigo inexistente');
     }
 
+    if($parms->hasfile('image') && $parms->file('image')->isValid()){
+        
+        $requestImage = $parms->file('image');
+        $extendion = $requestImage->extension();
+        $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . '.' . $extendion;
+        
+        $requestImage->move(public_path('img/user'), $imageName);
+    }else{
+        $imageName = null;
+    }
+
     $article = [
         'title' => $parms['title'],
         'description' => $parms['description'],
-        'image' => $parms['image'],
+        'image' => $imageName,
     ];
     
-    $parms['image'] ? array_merge($article, ['image' => $parms['image']]) : array_merge($article, ['image' => null]) ;
     
     Article::where('id', $parms->id)->update($article);
 
@@ -127,7 +135,7 @@ public function update_article(ArticleRequest $parms){
 } 
 public function recently_article(){
 
-    $articles = Article::orderBy('created_at', 'desc')->get();
+    $articles = Article::orderBy('created_at', 'desc')->withCount('likes')->get();
 
     return jsonResponse('Artigos recentes', 200, $articles);
 }
@@ -147,7 +155,7 @@ public function articleTagsUser($userId = null){
 
     $articles = Article::whereHas('tags', function($query) use ($tags){
         $query->whereIn('tags.id', $tags->pluck('id'));
-    })->get();
+    })->withCount('likes')->get();
 
 
     return jsonResponse('artigos associados as tags', 201, $articles);
@@ -162,13 +170,14 @@ public function TagsArticleUser($userId = null){
     //USEI o ".*." pra acessar todos os dados se um subArray que existia em tags
     $tags = $userExist->articles()->with('tags')->get()->pluck('tags.*.pivot.tag_id')->flatten()->unique();
 
+    // return $tags;
     //procure em artigos "wherehas -> onde tem" tags e passo função anonima e que ela vai usar "use" $tags
     // executei a $query e "whereIn -> em que" O id da tag fosse o mesmo das do usuario
     // condicionei que "where ->  onde" o o user_id fosse diferente "!=" do usuario que faz requisição
     // juntei com tags "with" pra poder utilizar no front end
    $articles = Article::whereHas('tags', function($query) use ($tags){
-        $query->whereIn('tag_id', $a);
-   })->where('user_id', '!=', $userExist->id)->with('tags')->get();
+        $query->whereIn('tag_id', $tags);
+   })->where('user_id', '!=', $userExist->id)->with('tags')->withCount('likes')->get();
 
    return jsonResponse('Artigos relacionasdos as Tags', 200, $articles);
 
