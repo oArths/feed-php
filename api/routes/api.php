@@ -34,16 +34,20 @@ Route::prefix('auth')->group(function(){
     Route::get('/articles/recently', [ArticleController::class, 'recently_article'])->name('rencently.article')->middleware('jwt');
     Route::get('/articles/recently/user/{userid?}', [ArticleController::class, 'articleTagsUser'])->name('rencently.user.article')->middleware('jwt');
     Route::get('/articles/tags/user/{userId?}', [ArticleController::class, 'TagsArticleUser'])->name('tags.user.article')->middleware('jwt');
-
+    
+    Route::post('/like/article', [LikeController::class, 'like'])->name('like.user')->middleware('jwt');
+    
+    
     Route::post('/comment', [CommentController::class, 'Create_Comment'])->name('create.comment')->middleware('jwt');
     Route::put('/comment/update', [CommentController::class, 'Update_comment'])->name('update.comment')->middleware('jwt');
     Route::delete('/comment/delete/{id?}', [CommentController::class, 'delete_comment'])->name('delete.comment')->middleware('jwt');
     Route::get('/comment/all/{id?}', [CommentController::class, 'list_comment'])->name('list.comment')->middleware('jwt');
     
+    Route::post('/like/comment', [CommentController::class, 'likeComment'])->name('like.comment')->middleware('jwt');
+    
     Route::post('/tag/create', [TagController::class, 'create_tag'])->name('create.tag')->middleware('jwt');
     Route::get('/tag/all', [TagController::class, 'get_tags'])->name('gat.tag')->middleware('jwt');
     
-    Route::post('/like', [LikeController::class, 'like'])->name('like.user')->middleware('jwt');
 });
 Route::fallback(function (){
     return response()->json(['error' => 'endpoint não encontrado'], 404);
