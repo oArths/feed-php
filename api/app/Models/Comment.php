@@ -17,6 +17,7 @@ class Comment extends Model
         'article_id',
         'user_id',
         'content',
+        'parent_id'
     ];
 
     public function user(){
@@ -32,6 +33,12 @@ class Comment extends Model
     public function likesCountComments()
     {
         return $this->likesComments()->count();
+    }
+    public function parent(){
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
+    public function replies(){
+        return $this->hasMany(Comment::class, 'parent_id');
     }
 
 }
