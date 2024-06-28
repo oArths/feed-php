@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CommentDeleteRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\CommentRrequest;
+use App\Http\Requests\LikeCommentsRequest;
 use App\Http\Requests\CommentUpdateRequest;
 use App\Models\Comment;
 use App\Models\ArticleLike;
+use App\Models\CommentsLike;
 
 class CommentController extends Controller
 {
@@ -69,20 +71,23 @@ class CommentController extends Controller
 
 
     }
-    public function like(LikeRequest $parms){
+    public function likeComment(LikeCommentsRequest $parms){
 
-        $exist = ArticleLike::where('article_id', $parms->article_id)->where('user_id', $parms->user_id)->first(); 
+
+        $exist = CommentsLike::where('article_id', $parms->article_id)->where('user_id', $parms->user_id)->where('comment_id', $parms->comment_id,)->first(); 
 
         if($exist){
             $exist->delete();
             return jsonResponse('Like apagado com Sucesso', 201);
 
-        }else{
-            $like = ArticleLike::create([
+        }
+        if(empty($exist)){
+            $like = CommentsLike::create([
                 'article_id' => $parms->article_id,
                 'user_id' => $parms->user_id,
+                'comment_id' => $parms->comment_id,
             ]);
-            return jsonResponse('Artigo Curtido com Sucesso', 201);
+            return jsonResponse('Artigo Curtido com Sucesso', 201, $like);
         }
 
     }
