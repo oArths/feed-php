@@ -45,3 +45,6 @@ Route::prefix('auth')->group(function(){
     
     Route::post('/like', [LikeController::class, 'like'])->name('like.user')->middleware('jwt');
 });
+Route::fallback(function (){
+    return response()->json(['error' => 'endpoint não encontrado'], 404);
+});
