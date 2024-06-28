@@ -22,7 +22,7 @@ class Article extends Model
         return $this->belongsTo(User::class);
     }
     public function tags(){
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class, 'article_tag');
     }
     public function comments(){
         return $this->hasMany(Comment::class);
@@ -31,4 +31,9 @@ class Article extends Model
     {
         return $this->hasMany(ArticleLike::class);
     }
+    public function likesCount()
+    {
+        return $this->likes()->count();
+    }
+
 }
