@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Article;
 use App\Models\ArticleLike;
 use App\Models\Comment;
+use App\Models\CommentsLike;
 use App\Models\User;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
@@ -36,10 +37,18 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $user->id,
                 ]);
                 // Cria comentários para os artigos
-                Comment::factory(3)->create([
+                $comments = Comment::factory(3)->create([
                     'user_id' => $user->id,
                     'article_id' => $article->id
                 ]);
+                $comments->each(function ($comments) use ($article, $user){
+
+                    CommentsLike::factory(2)->create([
+                        'article_id' => $article->id,
+                        'user_id' => $user->id,
+                        'comment_id' => $comments->id
+                    ]);
+                });
             });
         });
 
