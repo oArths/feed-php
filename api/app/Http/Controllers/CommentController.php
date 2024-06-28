@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CommentRrequest;
 use App\Http\Requests\CommentUpdateRequest;
 use App\Models\Comment;
+use App\Models\ArticleLike;
 
 class CommentController extends Controller
 {
@@ -16,7 +17,7 @@ class CommentController extends Controller
             return jsonResponse('É necessario infromar o id');
         } 
 
-        $comment = Comment::where('article_id', $params)->get();
+        $comment = Comment::where('article_id', $params)->withCount('likesComments')->get();
 
 
         if($comment->isEmpty()){
@@ -66,6 +67,23 @@ class CommentController extends Controller
         Comment::where('id', $params)->delete();
         return jsonResponse('Comentario excluido com sucesso');
 
+
+    }
+    public function like(LikeRequest $parms){
+
+        $exist = ArticleLike::where('article_id', $parms->article_id)->where('user_id', $parms->user_id)->first(); 
+
+        if($exist){
+            $exist->delete();
+            return jsonResponse('Like apagado com Sucesso', 201);
+
+        }else{
+            $like = ArticleLike::create([
+                'article_id' => $parms->article_id,
+                'user_id' => $parms->user_id,
+            ]);
+            return jsonResponse('Artigo Curtido com Sucesso', 201);
+        }
 
     }
 }
