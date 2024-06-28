@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Controllers\JwtController;
 use App\Http\Middleware\JwtValidation;
 use App\Http\Requests\UserSiguin;
@@ -59,5 +60,32 @@ class UserContrller extends Controller
             'token' => $user['token']
         ]);;
 
+    }
+    public function update_user(UserUpdateRequest $parms){
+
+        // return $parms->file('image');
+        $user = User::where('email', $parms['Auth']['email'])->first();
+
+
+        if($parms->hasfile('image') && $parms->file('image')->isValid()){
+        
+            $requestImage = $parms->file('image');
+            $extendion = $requestImage->extension();
+            $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . '.' . $extendion;
+            
+            $requestImage->move(public_path('img/user'), $imageName);
+        }else{
+            $imageName = null;
+        }
+
+        User::where('id', $user->id)->update([
+            'username' => $parms['username'],
+            'email' => $parms['email'],
+            'password' => password_hash($parms['password'], PASSWORD_DEFAULT),
+            'image' => $imageName
+
+        ]);
+
+        return jsonResponse('Usuario atualizado com sucesso', 200);
     }
 }

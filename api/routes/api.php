@@ -22,6 +22,7 @@ Route::post('/singup', [UserContrller::class, 'create_user'])->name('create.user
 Route::post('/siguin', [UserContrller::class, 'login_user'])->name('login.user');
 
 Route::prefix('auth')->group(function(){
+    Route::post('/siguin/update', [UserContrller::class, 'update_user'])->name('update.user')->middleware('jwt');
     
     Route::post('/articles', [ArticleController::class, 'create_article'])->name('create.article')->middleware('jwt');
     Route::get('/articles', [ArticleController::class, 'list_article'])->name('list.article')->middleware('jwt');
