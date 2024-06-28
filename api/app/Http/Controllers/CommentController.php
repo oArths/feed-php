@@ -19,7 +19,7 @@ class CommentController extends Controller
             return jsonResponse('É necessario infromar o id');
         } 
 
-        $comment = Comment::where('article_id', $params)->withCount('likesComments')->get();
+        $comment = Comment::where('article_id', $params)->with('replies')->withCount('likesComments')->get();
 
 
         if($comment->isEmpty()){
@@ -34,6 +34,7 @@ class CommentController extends Controller
             'user_id' => $prams->user_id,
             'article_id' => $prams->article_id,
             'content' => $prams->content,
+            'parent_id' => $prams->parent_id,
         ];
 
         $comment = Comment::create($create);
