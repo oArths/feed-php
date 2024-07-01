@@ -10,6 +10,9 @@ use App\Http\Controllers\JwtController;
 use App\Http\Middleware\JwtValidation;
 use App\Http\Requests\UserSiguin;
 
+
+use Illuminate\Support\Facades\Validator;
+
 class UserContrller extends Controller
 {
     public function create_user(UserRequest $params){
@@ -61,9 +64,38 @@ class UserContrller extends Controller
         ]);;
 
     }
-    public function update_user(UserUpdateRequest $parms){
+    public function update_user(Request $parms){
+        
+        $messages = [
+            'username.required' => 'O campo nome de usuário é obrigatório.',
+            'username.string' => 'O nome de usuário deve ser uma string.',
+            'username.max' => 'O nome de usuário não pode ter mais de 255 caracteres.',
+            'email.required' => 'O campo e-mail é obrigatório.',
+            'email.string' => 'O e-mail deve ser uma string.',
+            'email.email' => 'O e-mail deve ser um endereço de e-mail válido.',
+            'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
+            'email.unique' => 'O e-mail já está em uso.',
+            'password.string' => 'A senha deve ser uma string.',
+            'password.min' => 'A senha deve ter pelo menos 8 caracteres.',
+            'password.confirmed' => 'A confirmação da senha não corresponde.',
+            'image.image' => 'O arquivo deve ser uma imagem.',
+            'image.mimes' => 'A imagem deve ser do tipo: jpeg, png, jpg, gif.',
+            'image.max' => 'A imagem não pode ser maior que 2048 kilobytes.',
+        ];
 
-        // return $parms->file('image');
+        $validator = Validator::make($parms->all(), [
+            'username' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $parms->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], $messages);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         $user = User::where('email', $parms['Auth']['email'])->first();
 
 
