@@ -35,6 +35,7 @@ class UserContrller extends Controller
 
     }
     public function login_user(UserSiguin $params){
+
         $jwt = new JwtValidation;
         $newtoken = new JwtController;
 
@@ -119,5 +120,12 @@ class UserContrller extends Controller
         ]);
 
         return jsonResponse('Usuario atualizado com sucesso', 200);
+    }
+    public function userLogOut(){
+        $request = request();
+       $user = User::where('email', $request->Auth['email'])->first();
+       $user->token = null;
+       $user->save();
+        // return $user;
     }
 }
