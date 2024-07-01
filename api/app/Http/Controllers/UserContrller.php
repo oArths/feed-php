@@ -121,8 +121,9 @@ class UserContrller extends Controller
 
         return jsonResponse('Usuario atualizado com sucesso', 200);
     }
-    public function userLogOut(){
+    public function userLogOut(Request $params ){
         $request = request();
+        return $request;
        $user = User::where('email', $request->Auth['email'])->first();
        $user->token = null;
        $user->save();
