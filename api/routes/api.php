@@ -7,23 +7,12 @@ use App\Http\Controllers\UserContrller;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
 
 Route::post('/singup', [UserContrller::class, 'create_user'])->name('create.user');
 Route::post('/siguin', [UserContrller::class, 'login_user'])->name('login.user');
 
 Route::prefix('auth')->group(function(){
-    Route::post('/siguin/update', [UserContrller::class, 'update_user'])->name('update.user')->middleware('jwt');
+    Route::put('/siguin/update/', [UserContrller::class, 'update_user'])->middleware('jwt');
     
     Route::post('/articles', [ArticleController::class, 'create_article'])->name('create.article')->middleware('jwt');
     Route::get('/articles', [ArticleController::class, 'list_article'])->name('list.article')->middleware('jwt');
