@@ -1,13 +1,14 @@
 <?php
 
-if(!function_exists('jsonResponse')){
+
     function jsonResponse($menssage, $status = 201, $data = []){
         return response()->json([
             'message'=> $menssage,
             'data' =>$data,
         ], $status);
     }
-}
+
+
 if(!function_exists('jsonError')){
     function jsonError($menssage, $status = 201){
         return response()->json([

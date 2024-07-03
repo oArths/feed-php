@@ -59,7 +59,8 @@ class UserContrller extends Controller
             ]);
         }
 
-        return response()->json([
+        // return jsonResponse("logado com sucesso", 201,$user['token'] );
+        response()->json([
             'message' => "logado com sucesso",
             'token' => $user['token']
         ]);;
@@ -75,7 +76,6 @@ class UserContrller extends Controller
             'email.string' => 'O e-mail deve ser uma string.',
             'email.email' => 'O e-mail deve ser um endereço de e-mail válido.',
             'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
-            'email.unique' => 'O e-mail já está em uso.',
             'password.string' => 'A senha deve ser uma string.',
             'password.min' => 'A senha deve ter pelo menos 8 caracteres.',
             'password.confirmed' => 'A confirmação da senha não corresponde.',
@@ -86,7 +86,7 @@ class UserContrller extends Controller
 
         $validator = Validator::make($parms->all(), [
             'username' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $parms->id,
+            'email' => 'required|string|email|max:255' ,
             'password' => 'nullable|string|min:8|confirmed',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], $messages);
@@ -110,6 +110,7 @@ class UserContrller extends Controller
         }else{
             $imageName = null;
         }
+        return $parms;
 
         User::where('id', $user->id)->update([
             'username' => $parms['username'],
