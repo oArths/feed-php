@@ -60,7 +60,7 @@ class UserContrller extends Controller
         }
 
         // return jsonResponse("logado com sucesso", 201,$user['token'] );
-        response()->json([
+       return response()->json([
             'message' => "logado com sucesso",
             'token' => $user['token']
         ]);;
