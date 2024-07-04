@@ -23,7 +23,7 @@ class JwtValidation
         $data = $this->getToken($request);
         if(!$data){
             return response()->json([
-                'message' => 'inexistente'
+                'message' => 'token inexistente'
             ], 401);
         }
         $token = $this->valid_token($data); 
