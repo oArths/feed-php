@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $tags = Tag::factory(20)->create();
 
         // Cria usuários
-        User::factory(10)->create()->each(function ($user) use ($tags) {
+        User::factory(50)->create()->each(function ($user) use ($tags) {
             // Cria artigos para cada usuário
             Article::factory(5)->create(['user_id' => $user->id])->each(function ($article) use ($user, $tags) {
                 // Associa um conjunto aleatório de tags a cada artigo
