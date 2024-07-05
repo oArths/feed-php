@@ -26,6 +26,7 @@ Route::prefix('auth')->group(function(){
     Route::get('/articles/tags/user/{userId?}', [ArticleController::class, 'TagsArticleUser'])->name('tags.user.article')->middleware('jwt');
     
     Route::post('/like/article', [LikeController::class, 'like'])->name('like.user')->middleware('jwt');
+    Route::delete('/like/article', [LikeController::class, 'likeDelete'])->name('likeDelete.user')->middleware('jwt');
     
     
     Route::post('/comment', [CommentController::class, 'Create_Comment'])->name('create.comment')->middleware('jwt');
