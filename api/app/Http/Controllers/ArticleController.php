@@ -147,16 +147,34 @@ public function articleTagsUser($userId = null){
         return jsonError('Usuario não encontrado', 401);
     }
 
+    // return $getUser;
     // with('tags') -> faz o relacionamneto dos articgos com as tags e traz o artigo com a tag relaconada
     //pluck('tags') -> extrai o campo tag dos artigos e cria uma coleção com as tags
     // flatten() ->achata a coleção de coleçoes que excistia em apenas uma  com todas as tags
     // unique('id') -> remove as duplicadas de tags mantendo apenas tags unicas
     $tags = $getUser->articles()->with('tags')->get()->pluck('tags')->flatten()->unique('id');
 
-    $articles = Article::whereHas('tags', function($query) use ($tags){
+    // $articles = Article::whereHas('tags', function($query) use ($tags){
+    //     $query->whereIn('tags.id', $tags->pluck('id'));
+    // })->with(['user' => function($query){
+    //     $query->select('id', 'username');
+    // }])->withCount(['likes', 'comments'])->get();
+    $articles = Article::whereHas('tags', function($query) use ($tags) {
         $query->whereIn('tags.id', $tags->pluck('id'));
-    })->withCount('likes')->get();
-
+    })
+    ->with(['user' => function($query) {
+        $query->select('id', 'username');
+    }])
+    ->withCount(['likes', 'comments'])
+    ->with(['likes' => function($query) use ($userId) {
+        $query->where('user_id', $userId);
+    }])
+    ->get()
+    ->map(function($article) use ($userId) {
+        $article->liked_by_user = $article->likes->contains('user_id', $userId);
+        unset($article->likes); 
+        return $article;
+    });
 
     return jsonResponse('artigos associados as tags', 201, $articles);
 
