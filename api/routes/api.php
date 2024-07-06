@@ -14,6 +14,7 @@ Route::post('/siguin', [UserContrller::class, 'login_user'])->name('login.user')
 Route::prefix('auth')->group(function(){
     Route::put('/siguin/update/', [UserContrller::class, 'update_user'])->middleware('jwt');
     Route::delete('/siguin/delete/', [UserContrller::class, 'userLogOut'])->middleware('jwt');
+    Route::get('/user', [UserContrller::class, 'getUser'])->middleware('jwt');
     
     Route::post('/articles', [ArticleController::class, 'create_article'])->name('create.article')->middleware('jwt');
     Route::get('/articles', [ArticleController::class, 'list_article'])->name('list.article')->middleware('jwt');
