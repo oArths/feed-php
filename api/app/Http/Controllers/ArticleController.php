@@ -56,12 +56,16 @@ public function get_user_article( $id = null){
     if(is_null($id) || is_null($user)){
         return jsonError('Id não informado ou invalido', 404);
     }
-    $articles = $user->articles()->withCount('likes')->get();
+    $article = $user->articles()->withCount('likes')->get()->map(function($article) use ($id) {
+        $article->liked_by_user = $article->likes->contains('user_id', $id);
+        unset($article->likes); 
+        return $article;
+    });;
 
-    if($articles->isEmpty()){
+    if($article->isEmpty()){
         return jsonError('Usuario não possui artigos', 404);
     }else{
-        return jsonResponse('Artigos do usuario', 200, $articles);
+        return jsonResponse('Artigos do usuario', 200, $article);
     }
 
 }
@@ -135,7 +139,9 @@ public function update_article(ArticleRequest $parms){
 } 
 public function recently_article(){
 
-    $articles = Article::orderBy('created_at', 'desc')->withCount('likes')->get();
+    $articles = Article::orderBy('created_at', 'desc')->withCount('likes')-> withCount(['likes', 'comments'])->with(['user' => function($query){
+        $query->select('id', 'username');
+    }])->get();
 
     return jsonResponse('Artigos recentes', 200, $articles);
 }
