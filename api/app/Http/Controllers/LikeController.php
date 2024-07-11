@@ -20,7 +20,7 @@ class LikeController extends Controller
             ]);
             return jsonResponse('Artigo Curtido com Sucesso', 201);
         }
-        return jsonResponse('Like ja existe', 401);
+        return jsonResponse('Like ja existe', 400);
 
     }
     public function likeDelete(LikeRequest $parms){
@@ -32,7 +32,7 @@ class LikeController extends Controller
             return jsonResponse('Like apagado com Sucesso', 201);
 
         }
-        return jsonResponse('Artigo ja  foi Curtido', 401);
+        return jsonResponse('Artigo ja  foi Curtido', 400);
         
 
     }
