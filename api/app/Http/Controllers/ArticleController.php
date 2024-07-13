@@ -70,12 +70,21 @@ public function get_user_article( $id = null){
 
 }
 public function get_article( $id = null){
-
+    $email = request();
+    $user = User::where('email', $email['Auth']['email'])->first();
+    $userId =  $user['id'];
+    
     if(is_null($id)){
         return jsonError('Id não informado', 404);
     }
-    $articles = Article::withCount('likes')->find($id);
-
+    $articles = Article::withCount('likes')->get()->map(function($article) use ($userId) {
+        $article->liked_by_user = $article->likes->contains('user_id', $userId);
+        unset($article->likes); 
+        return $article;
+    })->find($id);
+    
+    // return $articles;
+    
     if(Empty($articles)){
         return jsonError('Artigo não exsite', 404);
     }else{
@@ -109,39 +118,51 @@ public function delete_article($id = null){
 }
 public function update_article(ArticleRequest $parms){
      
-    $exist = Article::find($parms->id);
+    $exist = Article::find($parms->id);  
 
     if(!$exist){
         return jsonError('Artigo inexistente');
     }
-
-    if($parms->hasfile('image') && $parms->file('image')->isValid()){
-        
-        $requestImage = $parms->file('image');
-        $extendion = $requestImage->extension();
-        $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . '.' . $extendion;
-        
-        $requestImage->move(public_path('img/user'), $imageName);
-    }else{
-        $imageName = null;
-    }
-
     $article = [
         'title' => $parms['title'],
         'description' => $parms['description'],
-        'image' => $imageName,
     ];
-    
-    
+ 
+
+        if($parms->hasfile('image') && $parms->file('image')->isValid()){
+            
+            $requestImage = $parms->file('image');
+            $extendion = $requestImage->extension();
+            $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . '.' . $extendion;
+            
+            $requestImage->move(public_path('img/user'), $imageName);
+            $article['image'] = $imageName;
+
+        }else{
+            $article['image'] = null;
+        }
+
     Article::where('id', $parms->id)->update($article);
 
     return jsonResponse('Artigo atualizado com sucesso!!', 201);
 } 
-public function recently_article(){
+public function recently_article(Request $parms){
 
+    $userId = User::where('email',$parms->Auth['email'])->get();
+    // return $userId[0]['id'];
     $articles = Article::orderBy('created_at', 'desc')->withCount('likes')-> withCount(['likes', 'comments'])->with(['user' => function($query){
         $query->select('id', 'username');
     }])->get();
+// ->map(function($article) use ($userId) {
+//         $article->liked_by_user = $article->likes->contains('user_id',  $userId[0]['id']);
+//         unset($article->likes); 
+//         return $article;
+//     })->get();
+$articles->each(function($article) use ($userId) {
+    $article->liked_by_user = $article->likes->contains('user_id', $userId[0]['id']);
+    unset($article->likes);
+});
+
 
     return jsonResponse('Artigos recentes', 200, $articles);
 }
