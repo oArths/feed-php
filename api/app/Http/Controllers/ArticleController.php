@@ -56,7 +56,7 @@ public function get_user_article( $id = null){
     if(is_null($id) || is_null($user)){
         return jsonError('Id não informado ou invalido', 404);
     }
-    $article = $user->articles()->withCount('likes')->get()->map(function($article) use ($id) {
+    $article = $user->articles()->orderBy('created_at', 'desc')->withCount('likes')->get()->map(function($article) use ($id) {
         $article->liked_by_user = $article->likes->contains('user_id', $id);
         unset($article->likes); 
         return $article;
@@ -149,15 +149,10 @@ public function update_article(ArticleRequest $parms){
 public function recently_article(Request $parms){
 
     $userId = User::where('email',$parms->Auth['email'])->get();
-    // return $userId[0]['id'];
     $articles = Article::orderBy('created_at', 'desc')->withCount('likes')-> withCount(['likes', 'comments'])->with(['user' => function($query){
-        $query->select('id', 'username');
+        $query->select('id', 'username', 'image');
     }])->get();
-// ->map(function($article) use ($userId) {
-//         $article->liked_by_user = $article->likes->contains('user_id',  $userId[0]['id']);
-//         unset($article->likes); 
-//         return $article;
-//     })->get();
+
 $articles->each(function($article) use ($userId) {
     $article->liked_by_user = $article->likes->contains('user_id', $userId[0]['id']);
     unset($article->likes);
