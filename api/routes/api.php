@@ -36,6 +36,7 @@ Route::prefix('auth')->group(function(){
     Route::get('/comment/all/{id?}', [CommentController::class, 'list_comment'])->name('list.comment')->middleware('jwt');
     
     Route::post('/like/comment', [CommentController::class, 'likeComment'])->name('like.comment')->middleware('jwt');
+    Route::delete('/like/comment', [CommentController::class, 'likeCommentDelete'])->name('like.comment.delete')->middleware('jwt');
     
     Route::post('/tag/create', [TagController::class, 'create_tag'])->name('create.tag')->middleware('jwt');
     Route::get('/tag/all', [TagController::class, 'get_tags'])->name('gat.tag')->middleware('jwt');
