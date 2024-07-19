@@ -27,6 +27,7 @@ class Article extends Model
     public function comments(){
         return $this->hasMany(Comment::class);
     }
+    //definindo uma consulta padrão
     public function commentsCount()
     {
         return $this->comments()->count();

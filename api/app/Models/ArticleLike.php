@@ -12,7 +12,8 @@ class ArticleLike extends Model
     use HasFactory;
 
     protected $fillable = ['article_id', 'user_id'];
-
+    
+    //adicionado relaçãoes com outras tabelas
     public function article(){
         return $this->belongTo(Article::class);
     }
