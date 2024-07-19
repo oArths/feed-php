@@ -23,20 +23,14 @@ class DatabaseSeeder extends Seeder
     {
 
         $tags = Tag::factory(20)->create();
-
-        // Cria usuários
-        User::factory(50)->create()->each(function ($user) use ($tags) {
-            // Cria artigos para cada usuário
+        User::factory(10)->create()->each(function ($user) use ($tags) {
             Article::factory(5)->create(['user_id' => $user->id])->each(function ($article) use ($user, $tags) {
-                // Associa um conjunto aleatório de tags a cada artigo
                 $article->tags()->attach($tags->random(3)->pluck('id')->toArray());
 
-                // Cria likes para os artigos
                 ArticleLike::factory(3)->create([
                     'article_id' => $article->id,
                     'user_id' => $user->id,
                 ]);
-                // Cria comentários para os artigos
                 $comments = Comment::factory(3)->create([
                     'user_id' => $user->id,
                     'article_id' => $article->id
@@ -51,8 +45,5 @@ class DatabaseSeeder extends Seeder
                 });
             });
         });
-
-
-
     }
 }
