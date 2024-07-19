@@ -55,13 +55,14 @@ class UserContrller extends Controller
             $token = $newtoken->Token($params['email']);
             return response()->json([
                 'message' => "logado com sucesso",
+                'UserId' => "$user->id",
                 'token' => $token
             ]);
         }
 
-        // return jsonResponse("logado com sucesso", 201,$user['token'] );
        return response()->json([
             'message' => "logado com sucesso",
+            'UserId' => "$user->id",
             'token' => "Bearer " . $user['token']
         ]);;
 
@@ -72,13 +73,6 @@ class UserContrller extends Controller
             'username.required' => 'O campo nome de usuário é obrigatório.',
             'username.string' => 'O nome de usuário deve ser uma string.',
             'username.max' => 'O nome de usuário não pode ter mais de 255 caracteres.',
-            'email.required' => 'O campo e-mail é obrigatório.',
-            'email.string' => 'O e-mail deve ser uma string.',
-            'email.email' => 'O e-mail deve ser um endereço de e-mail válido.',
-            'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
-            'password.string' => 'A senha deve ser uma string.',
-            'password.min' => 'A senha deve ter pelo menos 8 caracteres.',
-            'password.confirmed' => 'A confirmação da senha não corresponde.',
             'image.image' => 'O arquivo deve ser uma imagem.',
             'image.mimes' => 'A imagem deve ser do tipo: jpeg, png, jpg, gif.',
             'image.max' => 'A imagem não pode ser maior que 2048 kilobytes.',
@@ -86,9 +80,7 @@ class UserContrller extends Controller
 
         $validator = Validator::make($parms->all(), [
             'username' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255' ,
-            'password' => 'nullable|string|min:8|confirmed',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], $messages);
 
         if ($validator->fails()) {
@@ -99,6 +91,16 @@ class UserContrller extends Controller
 
         $user = User::where('email', $parms['Auth']['email'])->first();
 
+        $userinfo = [
+            'username' => $parms['username'],
+        ];
+
+        if(isset($parms->bio)){
+            $bio = $parms->bio;
+            $userinfo['bio'] = $bio ;
+        }else{
+            $userinfo['bio'] = null;
+        };
 
         if($parms->hasfile('image') && $parms->file('image')->isValid()){
         
@@ -107,18 +109,16 @@ class UserContrller extends Controller
             $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . '.' . $extendion;
             
             $requestImage->move(public_path('img/user'), $imageName);
+            $userinfo['image'] = $imageName;
         }else{
-            $imageName = null;
+            $valid = User::where('image', $parms->imageName)->get();
+            if(empty($valid)){
+                $userinfo['image'] = null;
+            }
+            $userinfo['image'] =  $parms->imageName;
         }
-        return $parms;
 
-        User::where('id', $user->id)->update([
-            'username' => $parms['username'],
-            'email' => $parms['email'],
-            'password' => password_hash($parms['password'], PASSWORD_DEFAULT),
-            'image' => $imageName
-
-        ]);
+        User::where('id', $user->id)->update($userinfo);
 
         return jsonResponse('Usuario atualizado com sucesso', 200);
     }
@@ -129,5 +129,10 @@ class UserContrller extends Controller
        $user->token = null;
        $user->save();
         // return $user;
+    }
+    public function getUser(Request $params){
+        $User = User::where('email', $params->Auth['email'])->first();
+
+        return jsonResponse('Dados do Usuario',  200, $User  );
     }
 }
