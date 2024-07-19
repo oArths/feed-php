@@ -27,16 +27,13 @@ class ArticleRequest extends FormRequest
     {
         return [
             // 'user_id'=> 'required|exist:user,id',
-            'title' => 'required|string|max:255|min:1',
+            'title' => 'string|max:255|min:1',
             'description' => 'required|string|max:255|min:1',
         ];
     }
     public function messages()
     {
         return [
-            // 'user_id.required'=> 'Usuario não fornecido',
-            // 'user_id.exist'=> 'Usuario não cadastrado',
-            'title.required'=> 'titulo não fornecido',
             'title.max'=> 'maximo de caracteres suportado utrapassado',
             'title.min'=> 'minimo de caracteres não fornecidos',
             'description.max'=> 'maximo de caracteres suportado utrapassado',
