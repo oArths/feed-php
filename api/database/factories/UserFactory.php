@@ -19,15 +19,15 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        do {
-            $email = $this->faker->unique()->safeEmail();
-        } while (User::where('email', $email)->exists());
+        $uniqueNumber = $this->faker->randomNumber();
+        // $email = $this->faker->unique()->safeEmail() . $uniqueNumber;
 
         $user = new \App\Models\User( [
-            'username' => $this->faker->userName,
-            'email' => $email,
+            'username' => $this->faker->unique()->userName,
+            'email' => $this->faker->userName() . $uniqueNumber .'@mydomain.com' ,
             'password' => bcrypt('password'), // ou use Hash::make('password')
             'image' => $this->faker->imageUrl(),
+            'bio' => $this->faker->paragraph(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -39,6 +39,7 @@ class UserFactory extends Factory
         return [
             'username' => $user->username,
             'email' => $user->email,
+            'bio' => $user->bio,
             'password' => $user->password,
             'image' => $user->image,
             'token' => $token,
