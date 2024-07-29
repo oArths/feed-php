@@ -33,7 +33,8 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 # Executar o Composer como um usuário não root
 RUN useradd -ms /bin/bash composeruser
 USER composeruser
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+RUN composer install --ignore-platform-reqs --prefer-dist --no-scripts \
+ --no-progress --no-suggest --no-interaction --no-dev --no-autoloader
 
 # Voltar para o usuário root
 USER root
