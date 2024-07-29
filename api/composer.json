@@ -25,7 +25,7 @@
             "app/helpers.php"
         ],
         "psr-4": {
-            "App\\": "app/",
+            "App\\": "api/app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
