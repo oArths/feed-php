@@ -29,7 +29,7 @@ WORKDIR /var/www
 
 # Copiar o arquivo composer.json e instalar dependências do Composer
 COPY api/composer.json api/composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs || { cat /root/.composer/logs/*.log; exit 1; }
 
 # Copiar o restante da aplicação para o contêiner
 COPY api ./
