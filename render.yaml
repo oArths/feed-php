@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: laravel-app
+    env: php
+    plan: free
+    rootDirectory: api
+    buildCommand: |
+      curl -sS https://getcomposer.org/installer | php
+      php composer.phar install --optimize-autoloader --no-dev --ignore-platform-reqs
+      npm install
+      npm run prod
+      php artisan key:generate
+    startCommand: php artisan serve --host 0.0.0.0 --port 10000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: http://localhost
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: roundhouse.proxy.rlwy.net
+      - key: DB_PORT
+        value: '25300'
+      - key: DB_DATABASE
+        value: railway
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        value: kbXOCTBvvXmDMSrxdpEskAsvsJGkvGKA
